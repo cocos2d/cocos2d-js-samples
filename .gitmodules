@@ -1,0 +1,3 @@
+[submodule "cocos/cocos2d-x"]
+	path = cocos/cocos2d-x
+	url = git://github.com/cocos2d/cocos2d-x.git
