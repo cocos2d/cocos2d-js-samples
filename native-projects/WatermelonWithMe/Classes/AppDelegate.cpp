@@ -28,16 +28,20 @@ AppDelegate::~AppDelegate()
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
-    auto pDirector = Director::getInstance();
-    pDirector->setOpenGLView(EGLView::getInstance());
+    auto director = Director::getInstance();
+    auto glview = director->getOpenGLView();
+    if(!glview) {
+        glview = GLView::createWithRect("WatermelonWithMe", Rect(0, 0, 900, 640));
+        director->setOpenGLView(glview);
+    }
     
     // turn on display FPS
-    pDirector->setDisplayStats(true);
+    director->setDisplayStats(true);
     
     // set FPS. the default value is 1.0/60 if you don't call this
-    pDirector->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 60);
     
-    EGLView::getInstance()->setDesignResolutionSize(480, 320, ResolutionPolicy::FIXED_HEIGHT);
+    glview->setDesignResolutionSize(480, 320, ResolutionPolicy::FIXED_HEIGHT);
     
     FileUtils::getInstance()->addSearchPath("script");
     
