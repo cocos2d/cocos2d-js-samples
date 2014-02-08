@@ -28,13 +28,18 @@ AppDelegate::~AppDelegate()
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
-    auto pDirector = Director::getInstance();
-    pDirector->setOpenGLView(EGLView::getInstance());
-    pDirector->setProjection(Director::Projection::_2D);
+    auto director = Director::getInstance();
+    auto glview = director->getOpenGLView();
+    if(!glview) {
+        glview = GLView::createWithRect("CrystalCraze", Rect(0, 0, 480, 720));
+        director->setOpenGLView(glview);
+    }
+    
+    director->setProjection(Director::Projection::_2D);
 
     FileUtils::getInstance()->addSearchPath("script");
 
-    auto screenSize = EGLView::getInstance()->getFrameSize();
+    auto screenSize = glview->getFrameSize();
 
     auto designSize = Size(320, 480);
     auto resourceSize = Size(320, 480);
@@ -91,15 +96,15 @@ bool AppDelegate::applicationDidFinishLaunching()
         
         FileUtils::getInstance()->setSearchResolutionsOrder(resDirOrders);
     }
-    pDirector->setContentScaleFactor(resourceSize.width/designSize.width);
+    director->setContentScaleFactor(resourceSize.width/designSize.width);
 
-    EGLView::getInstance()->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::SHOW_ALL);
+    glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::SHOW_ALL);
     
     // turn on display FPS
-    pDirector->setDisplayStats(true);
+    director->setDisplayStats(true);
     
     // set FPS. the default value is 1.0/60 if you don't call this
-    pDirector->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 60);
     
     ScriptingCore* sc = ScriptingCore::getInstance();
     sc->addRegisterCallback(register_all_cocos2dx);

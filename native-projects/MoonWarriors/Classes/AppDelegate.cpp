@@ -28,20 +28,37 @@ AppDelegate::~AppDelegate()
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
-    auto pDirector = Director::getInstance();
-    pDirector->setOpenGLView(EGLView::getInstance());
-    pDirector->setProjection(Director::Projection::_2D);
+    auto director = Director::getInstance();
+    auto glview = director->getOpenGLView();
+    if(!glview) {
+        glview = GLView::createWithRect("MoonWarriors", Rect(0, 0, 480, 720));
+        director->setOpenGLView(glview);
+    }
+    director->setProjection(Director::Projection::_2D);
 
+    std::vector<std::string> searchPaths = FileUtils::getInstance()->getSearchPaths();
+    
+    searchPaths.push_back("script");
+    
+    Application::Platform platform = Application::getInstance()->getTargetPlatform();
+    if (platform == Application::Platform::OS_IPHONE || platform == Application::Platform::OS_IPAD || platform == Application::Platform::OS_MAC)
+    {
+        searchPaths.push_back("res");
+        searchPaths.push_back("src");
+    }
+    
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
+    
     // Set the design resolution
-    EGLView::getInstance()->setDesignResolutionSize(320, 480, ResolutionPolicy::SHOW_ALL);
+    glview->setDesignResolutionSize(320, 480, ResolutionPolicy::SHOW_ALL);
 
     // turn on display FPS
-    pDirector->setDisplayStats(true);
+    director->setDisplayStats(true);
     
     // set FPS. the default value is 1.0/60 if you don't call this
-    pDirector->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 60);
     
-    FileUtils::getInstance()->addSearchPath("script");
+    
     
     ScriptingCore* sc = ScriptingCore::getInstance();
     sc->addRegisterCallback(register_all_cocos2dx);
